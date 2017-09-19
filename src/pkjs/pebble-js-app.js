@@ -1,5 +1,6 @@
 var myAPIKey = 'fd541b64f6da378322b01f9a122d5dee';
 var watchID;
+var value;
 
 function iconFromWeatherId(weatherId) {
   if (weatherId < 600) {
@@ -62,26 +63,6 @@ function fetchWeather(latitude, longitude) {
   req.send(null);
 }
 
-/*
-function locationSuccess(pos) {
-  var coordinates = pos.coords;
-  fetchWeather(coordinates.latitude, coordinates.longitude);
-  console.log('Fetched weather');
-}
-
-function locationError(err) {
-  console.warn('location error (' + err.code + '): ' + err.message);
-  Pebble.sendAppMessage({
-    'WEATHER_CITY_KEY': 'Loc Unavailable',
-    'WEATHER_TEMPERATURE_KEY': 'N/A'
-  });
-}
-
-var locationOptions = {
-  'timeout': 15000,
-  'maximumAge': 60000
-};
-*/
 var options = {
   enableHighAccuracy: true,
   maximumAge: 0,
@@ -102,9 +83,6 @@ function error(err) {
 
 Pebble.addEventListener('ready', function (e) {
   console.log('connect!' + e.ready);
-  //navigator.geolocation.getCurrentPosition(locationSuccess, locationError,
-    //locationOptions);
-  // Get location updates
   watchID = navigator.geolocation.getCurrentPosition(success, error, options);
   console.log(e.type);
 });
@@ -113,17 +91,20 @@ Pebble.addEventListener('appmessage', function (e) {
   console.log(e.type);
   console.log(JSON.stringify(e.payload));
   var dict = e.payload;
+  var value;
   
   if (dict['4'])
   {
-    var value = dict['4'];
+    value = dict['4'];
     console.log(value);
-    // fetchWeather(); ???
+    fetchWeather();
+  }
+  
+  if (dict['5'])
+  {
+    value = dict['5'];
+    console.log(value);
+    //fetchExactLocation();
   }
 });
 
-/*Pebble.addEventListener('webviewclosed', function (e) {
-  console.log('webview closed');
-  console.log(e.type);
-  console.log(e.response);
-}); */

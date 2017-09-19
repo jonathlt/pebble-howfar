@@ -11,6 +11,8 @@
         "enableMultiJS": false,
         "messageKeys": {
             "DISTANCE_KEY": 3,
+            "MESSAGE_KEY_EXACT_LOC": 5,
+            "MESSAGE_KEY_WEATHER_LOCALITY": 4,
             "WEATHER_CITY_KEY": 2,
             "WEATHER_ICON_KEY": 0,
             "WEATHER_TEMPERATURE_KEY": 1

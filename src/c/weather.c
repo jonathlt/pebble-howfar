@@ -17,7 +17,8 @@ enum WeatherKey {
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_CITY_KEY = 0x2,         // TUPLE_CSTRING
   DISTANCE_KEY = 0x3,             // TUPLE_CSTRING
-  MESSAGE_KEY = 0x4,              // TUPLE_CSTRING
+  MESSAGE_KEY_WEATHER_LOCALITY = 0x4,  // TUPLE_CSTRING
+  MESSAGE_KEY_EXACT_LOC = 0x5     // TUPLE_CSTRING
 };
 
 enum MessageKey {
@@ -81,8 +82,8 @@ static void request_weather(void) {
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
 {
-  //Get location every five minutes
-  if(tick_time->tm_min % 1 == 0)
+  //Get weather and locality every five minutes
+  if(tick_time->tm_min % 5 == 0)
   {
     //Begin dictionary
     DictionaryIterator *iter;
@@ -90,11 +91,27 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
     
     //Add key value pair
     //static const char *string = "Hello!";
-    dict_write_cstring(iter, MESSAGE_KEY, "Hello");
+    dict_write_cstring(iter, MESSAGE_KEY_WEATHER_LOCALITY, "Get Weather and locality");
     
     //Send the message
     app_message_outbox_send();
     
+  }
+  
+  //Get exact location every 1 minute
+  if (tick_time->tm_min % 1 == 0)
+  {
+    //Begin dictionary
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+    
+    //Add key value pair
+    //static const char *string = "Hello!";
+    dict_write_cstring(iter, MESSAGE_KEY_EXACT_LOC, "Get Exact Location");
+    
+    //Send the message
+    app_message_outbox_send();
+  
   }
 }
 
