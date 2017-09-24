@@ -30,6 +30,26 @@ function distance(lat1, lon1, lat2, lon2, unit) {
   return dist.toFixed(2) + ' miles';
 }
 
+var options = {
+  enableHighAccuracy: true,
+  maximumAge: 0,
+  timeout: 5000
+};
+
+function fetchDistanceFromPoint()
+{
+  watchID = navigator.geolocation.getCurrentPosition(gotLocation, error, options);
+}
+
+function gotLocation(pos)
+{
+  var coords = pos.coords;
+  var dist = distance(coords.latitude, coords.longitude, 51.40065, -0.2617,"M");
+  Pebble.sendAppMessage({
+    'DISTANCE_KEY': dist
+  });
+}
+
 function fetchWeather(latitude, longitude) {
   //latitude = '51.400663';
   //longitude = '-0.259263';
@@ -63,12 +83,6 @@ function fetchWeather(latitude, longitude) {
   req.send(null);
 }
 
-var options = {
-  enableHighAccuracy: true,
-  maximumAge: 0,
-  timeout: 5000
-};
-
 function success(pos) {
   var coords = pos.coords;
   console.log('Position changed handler');
@@ -97,14 +111,16 @@ Pebble.addEventListener('appmessage', function (e) {
   {
     value = dict['4'];
     console.log(value);
-    fetchWeather();
+    console.log("about to fetch weather");
+    //Method callback success will fetch weather if getCurrentPosition ussccess.
+    watchID = navigator.geolocation.getCurrentPosition(success, error, options);
   }
   
   if (dict['5'])
   {
     value = dict['5'];
     console.log(value);
-    //fetchExactLocation();
+    fetchDistanceFromPoint();
   }
 });
 
